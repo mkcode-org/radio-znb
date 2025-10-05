@@ -168,7 +168,7 @@ const defaultState: PlayerContextType = {
 	pause: () => {},
 	seek: () => {},
 	toggle: () => {},
-	volume: 0.8,
+	volume: 1,
 	setVolume: () => {},
 }
 

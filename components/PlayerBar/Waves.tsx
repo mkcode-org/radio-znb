@@ -1,12 +1,9 @@
 'use client'
 
 import Image from 'next/image'
-import { FC, PropsWithChildren, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
-const PlayerBarWavesAnimation: FC<PropsWithChildren & { playing: boolean }> = ({
-	children,
-	playing,
-}) => {
+const PlayerBarWavesAnimation: FC<{ playing: boolean }> = ({ playing }) => {
 	const [src, setSrc] = useState<Wave>(waves[0])
 
 	useEffect(() => {
@@ -21,17 +18,11 @@ const PlayerBarWavesAnimation: FC<PropsWithChildren & { playing: boolean }> = ({
 		return () => clearInterval(interval)
 	}, [playing])
 
-	if (!playing) return children
-	return (
-		<div className='relative h-full'>
-			{children}
-			<Waves src={src.right} />
-		</div>
-	)
+	return <div className='grow'>{playing && <Waves src={src.right} />}</div>
 }
 
 const Waves: FC<{ src: string[] }> = ({ src }) => (
-	<div className='absolute h-full w-32 flex gap-2'>
+	<div className='absolute h-2/5 top-6 w-16 flex gap-4'>
 		<div
 			className={`animate-fadeInOut relative opacity-0 w-1/8`}
 			style={{ animationDelay: '0ms' }}

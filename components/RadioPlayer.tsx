@@ -1,10 +1,10 @@
 'use client'
 
 import Image from 'next/image'
-import { orpheyStream } from './PlayerBar/Player'
 import { usePlayer } from './PlayerBar/PlayerContext'
 import Volume from './Volume'
 import WaveAnimation from './Waves'
+import { orpheyStream } from './PlayerBar/Controls'
 
 const RadioPlayer = () => {
 	const { isPlaying: playing, play, pause, volume, setVolume } = usePlayer()
@@ -22,7 +22,9 @@ const RadioPlayer = () => {
 						height={1000}
 					/>
 					<button
-						onClick={() => (playing ? pause() : play(orpheyStream, true))}
+						onClick={() =>
+							playing ? pause() : play({ ...orpheyStream, isLive: true })
+						}
 						className={`absolute cursor-pointer bottom-1/5 left-3/5 w-1/6 h-1/5`}
 					>
 						<Image

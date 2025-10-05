@@ -12,6 +12,7 @@ import {
 
 export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 	const [src, setSrc] = useState('')
+	const [title, setTitle] = useState('')
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [timecode, setTimecode] = useState(defaultState.timecode)
 	const [duration, setDuration] = useState(defaultState.duration)
@@ -24,6 +25,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 		const saved = getLocalStorageContext()
 
 		setSrc(saved.src)
+		setTitle(saved.title)
 		setTimecode(saved.timecode)
 		setDuration(saved.duration)
 		setIsLive(saved.isLive)
@@ -33,9 +35,17 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 	useEffect(() => {
 		localStorage.setItem(
 			'player-context',
-			JSON.stringify({ src, isPlaying, timecode, duration, isLive, volume })
+			JSON.stringify({
+				src,
+				title,
+				isPlaying,
+				timecode,
+				duration,
+				isLive,
+				volume,
+			})
 		)
-	}, [src, duration, isLive, isPlaying, timecode, volume])
+	}, [src, title, duration, isLive, isPlaying, timecode, volume])
 
 	useEffect(() => {
 		if (!audioRef.current) {
@@ -88,7 +98,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 		audio.volume = volume
 	}, [volume])
 
-	const play = async (newSrc: string, live = false) => {
+	const play = async ({ src: newSrc, title, isLive = false }: PlayOptions) => {
 		const audio = audioRef.current
 		if (!audio) return
 		audio.pause()
@@ -96,7 +106,8 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 		if (audio.src !== newSrc) {
 			audio.src = newSrc
 		}
-		setIsLive(live)
+		setIsLive(isLive)
+		setTitle(title)
 
 		await audio.play()
 	}
@@ -111,7 +122,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 		const audio = audioRef.current
 		if (!audio) return
 		if (audio.paused) {
-			play(src, isLive)
+			play({ src, title, isLive })
 		} else {
 			pause()
 		}
@@ -128,6 +139,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 		<PlayerContext.Provider
 			value={{
 				src,
+				title,
 				isPlaying,
 				timecode,
 				duration,
@@ -147,6 +159,7 @@ export const PlayerContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
 const defaultState: PlayerContextType = {
 	src: '',
+	title: '',
 	isPlaying: false,
 	timecode: 0,
 	duration: 0,
@@ -175,14 +188,21 @@ const getLocalStorageContext = (): PlayerContextType => {
 
 type PlayerContextType = {
 	src: string
+	title: string
 	isPlaying: boolean
 	timecode: number
 	duration: number
 	isLive: boolean
-	play: (src: string, isLive?: boolean) => void
+	play: (props: PlayOptions) => void
 	pause: () => void
 	toggle: () => void
 	seek: (time: number) => void
 	volume: number
 	setVolume: (vol: number) => void
+}
+
+type PlayOptions = {
+	src: string
+	title: string
+	isLive?: boolean
 }

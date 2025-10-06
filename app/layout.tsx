@@ -1,3 +1,4 @@
+import ConvexContextProvider from '@/components/ConvexContext'
 import PlayerBar from '@/components/PlayerBar/Player'
 import { PlayerContextProvider } from '@/components/PlayerBar/PlayerContext'
 import type { Metadata } from 'next'
@@ -11,10 +12,12 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className='m-4'>
-				<PlayerContextProvider>
-					{children}
-					<PlayerBar />
-				</PlayerContextProvider>
+				<ConvexContextProvider>
+					<PlayerContextProvider>
+						{children}
+						<PlayerBar />
+					</PlayerContextProvider>
+				</ConvexContextProvider>
 			</body>
 		</html>
 	)
